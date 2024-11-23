@@ -111,7 +111,7 @@ export class NavigationMenuComponent {
             console.log(`Dialog message: ${dialog.message()}`);
             await dialog.accept().catch(() => {});
         });
-        
+
         await this.clickOnProjectOptions(id);
         await this.projectOptions.waitFor({ state: 'visible' });
         await this.projectOptions.locator('#ProjShareMenuDel').click();
@@ -120,6 +120,11 @@ export class NavigationMenuComponent {
           //await this.page.getByRole('link', { name: 'Delete', exact: true }).click();
         await this.page.waitForResponse(response => response.url().includes('Projects'));
         console.log("Project deleted");
+    }
+
+
+    selectLastProject() {
+        return this.page.locator('#mainProjectList > :last-child').click();
     }
 
         

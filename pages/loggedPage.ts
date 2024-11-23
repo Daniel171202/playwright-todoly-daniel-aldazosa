@@ -1,8 +1,9 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { NavigationMenuComponent } from './loggedPageComponents/navigationMenuComponent';
-
+import { TasksComponent } from './loggedPageComponents/tasksComponent';
 
 export class loggedPage {
+   
   
     readonly url = "https://todo.ly/";
     readonly page: Page;
@@ -12,7 +13,7 @@ export class loggedPage {
 
 
     readonly navigationMenuComponent: NavigationMenuComponent;
-
+    readonly tasksComponent: TasksComponent;
 
 
 
@@ -28,6 +29,7 @@ export class loggedPage {
         this.errorMessageText = page.locator('#ErrorMessageText');
         this.logoutText = page.getByText('Logout')
         this.navigationMenuComponent = new NavigationMenuComponent(page);
+        this.tasksComponent = new TasksComponent(page);
     }
 
     async goto() {
@@ -81,5 +83,30 @@ export class loggedPage {
         await this.navigationMenuComponent.deleteProject(id);
     }
 
+    async  selectLastProject() {
+        await this.navigationMenuComponent.selectLastProject();
+    }
+
+
+
+
+    //task methods
+    async fillTaskName(taskName: string) {
+        await this.tasksComponent.fillTaskName(taskName);
+    }
+
+    async clickOnAddTask(taskName: string) {
+       return await this.tasksComponent.clickOnAddTask(taskName);
+    }
+
+    async clickOnTaskOptions(taskName: string) {
+        await this.tasksComponent.clickOnTaskOptions(taskName);
+    }
+
+    async clickOnTaskRandomPriority() {
+        await this.tasksComponent.clickOnTaskRandomPriority();
+    }
+
+    
 
 }
