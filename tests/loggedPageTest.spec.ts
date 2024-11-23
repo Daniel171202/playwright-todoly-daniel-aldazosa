@@ -29,24 +29,24 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Adicionar un proyecto cambiandole el icono por defecto', async ({ page }) => {
-
     const loggedPage = await createLoggedPage(page);
-    console.log("loggedPage", loggedPage);
 
     await loggedPage.clickOnNewProject();
     await loggedPage.fillNewProjectName(randomName);
     idRandomProject = await loggedPage.clickOnAddProject() ?? '';
-
-    console.log("idRandomProject", idRandomProject);
-
-    
 
     expect(await loggedPage.checkIfProjectExistsByName(randomName)).toBeTruthy();
     expect(await loggedPage.checkIfProjectExistsById(idRandomProject)).toBeTruthy();    
 
     await loggedPage.clickOnProjectOptions(idRandomProject);
     await loggedPage.changeProjectIconRandom();
+    expect(await loggedPage.checkIfProjectIconIsNotDefault(idRandomProject)).toBeTruthy();
 
-    
+    //delete project
+    await loggedPage.deleteProject(idRandomProject);
 
 });
+
+
+
+

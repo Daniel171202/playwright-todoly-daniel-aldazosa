@@ -3,6 +3,7 @@ import { NavigationMenuComponent } from './loggedPageComponents/navigationMenuCo
 
 
 export class loggedPage {
+  
     readonly url = "https://todo.ly/";
     readonly page: Page;
     readonly logo: Locator;
@@ -70,6 +71,14 @@ export class loggedPage {
 
     async changeProjectIconRandom() {
         await this.navigationMenuComponent.changeProjectIconRandom();
+    }
+
+    async checkIfProjectIconIsNotDefault(id: string) {
+        return await this.navigationMenuComponent.checkIfProjectIconIsNotDefault(id);
+    }
+
+    async deleteProject(id: string) {      
+        await this.navigationMenuComponent.deleteProject(id);
     }
 
 
