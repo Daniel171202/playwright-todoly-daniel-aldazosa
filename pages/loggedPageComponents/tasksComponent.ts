@@ -55,6 +55,23 @@ export class TasksComponent {
 
     }
 
+    async checkIfTaskChangedPriority(taskName:string){
+        try{
+            const task = this.page.locator('#mainItemList').getByText(taskName);
+            const style = await task.getAttribute('style');
+            if(style && style.includes('color: rgb(0, 0, 0)')){
+                throw new Error("The task color is black");
+            }
+            return true;
+        }catch(e){
+            return false;
+        }
+       
+
+    }
+
+
+
 
 
 

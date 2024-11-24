@@ -107,6 +107,10 @@ export class loggedPage {
         await this.tasksComponent.clickOnTaskRandomPriority();
     }
 
-    
+
+
+    async checkIfTaskChangedPriority(taskName: string) {
+        return await this.tasksComponent.checkIfTaskChangedPriority(taskName);
+    }
 
 }
