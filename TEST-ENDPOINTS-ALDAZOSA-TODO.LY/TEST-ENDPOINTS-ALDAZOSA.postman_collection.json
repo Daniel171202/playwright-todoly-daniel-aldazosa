@@ -1,0 +1,470 @@
+{
+	"info": {
+		"_postman_id": "79fb4084-826c-4cbd-a60d-4f80bb7a6a43",
+		"name": "TEST-ENDPOINTS-ALDAZOSA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27481029"
+	},
+	"item": [
+		{
+			"name": "GET ALL PROJECTS",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"pm.test(\"Every id is Valid\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    const extractIds = data => {",
+							"        if (Array.isArray(data)) {",
+							"            return data.flatMap(item => [item.Id, ...(item.Children ? extractIds(item.Children) : [])]);",
+							"        } else {",
+							"            return [data.Id];",
+							"        }",
+							"    }",
+							"",
+							"    const allValid = extractIds(jsonData).every(id => Number.isFinite(id) && id > 1000000);",
+							"",
+							"    pm.expect(allValid).to.be.true;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Every Content is a string\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    const extractContents = data => {",
+							"        if (Array.isArray(data)) {",
+							"            return data.flatMap(item => [",
+							"                item.Content, ",
+							"                ...(item.Children ? extractContents(item.Children) : [])",
+							"            ]);",
+							"        } else {",
+							"            return [data.Content];",
+							"        }",
+							"    };",
+							"",
+							"    const allValid = extractContents(jsonData).every(content => typeof content === \"string\");",
+							"",
+							"    pm.expect(allValid).to.be.true;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Every Id is unique\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    const extractIds = data => {",
+							"        if (Array.isArray(data)) {",
+							"            return data.flatMap(item => [item.Id, ...(item.Children ? extractIds(item.Children) : [])]);",
+							"        }",
+							"        return [data.Id];",
+							"    };",
+							"",
+							"    const ids = extractIds(jsonData);",
+							"    const uniqueIds = new Set(ids);",
+							"",
+							"    pm.expect(uniqueIds.size).to.equal(ids.length);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Every item has Id, Content, and Icon\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    const checkKeys = data => {",
+							"        if (Array.isArray(data)) {",
+							"            return data.every(item => ",
+							"                'Id' in item && 'Content' in item && 'Icon' in item &&",
+							"                (!item.Children || checkKeys(item.Children))",
+							"            );",
+							"        }",
+							"        return 'Id' in data && 'Content' in data && 'Icon' in data;",
+							"    };",
+							"",
+							"    pm.expect(checkKeys(jsonData)).to.be.true;",
+							"});",
+							"",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}api/projects.json",
+					"host": [
+						"{{url}}api"
+					],
+					"path": [
+						"projects.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CREATE NEW PROJECT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.collectionVariables.set(\"idProject\", jsonData.Id);",
+							"pm.environment.set(\"idProject\", jsonData.Id);",
+							"",
+							"//tests",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"pm.test(\"Every id is Valid\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    const extractIds = data => {",
+							"        if (Array.isArray(data)) {",
+							"            return data.flatMap(item => [item.Id, ...(item.Children ? extractIds(item.Children) : [])]);",
+							"        } else {",
+							"            return [data.Id];",
+							"        }",
+							"    }",
+							"",
+							"    const allValid = extractIds(jsonData).every(id => Number.isFinite(id) && id > 1000000);",
+							"",
+							"    pm.expect(allValid).to.be.true;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Validación de creación del Content\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.Content).to.eqls(`${pm.environment.get(\"newContent\")}`);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Validate Icon is the default one(Icon:0)\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.Icon).to.eqls(0);",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const newContent =  pm.variables.replaceIn(\"{{$randomCountry}}\");",
+							"pm.environment.set(\"newContent\",newContent);",
+							"pm.collectionVariables.set(\"newContent\", newContent);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Content\": \"{{newContent}}\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}api/projects.json",
+					"host": [
+						"{{url}}api"
+					],
+					"path": [
+						"projects.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET PROJECT BY ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"pm.test(\"Every id is Valid\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    const extractIds = data => {",
+							"        if (Array.isArray(data)) {",
+							"            return data.flatMap(item => [item.Id, ...(item.Children ? extractIds(item.Children) : [])]);",
+							"        } else {",
+							"            return [data.Id];",
+							"        }",
+							"    }",
+							"",
+							"    const allValid = extractIds(jsonData).every(id => Number.isFinite(id) && id > 1000000);",
+							"",
+							"    pm.expect(allValid).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Every Content is a string\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    const extractContents = data => {",
+							"        if (Array.isArray(data)) {",
+							"            return data.flatMap(item => [",
+							"                item.Content, ",
+							"                ...(item.Children ? extractContents(item.Children) : [])",
+							"            ]);",
+							"        } else {",
+							"            return [data.Content];",
+							"        }",
+							"    };",
+							"",
+							"    const allValid = extractContents(jsonData).every(content => typeof content === \"string\");",
+							"",
+							"    pm.expect(allValid).to.be.true;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Every item has Id, Content, and Icon\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    const checkKeys = data => {",
+							"        if (Array.isArray(data)) {",
+							"            return data.every(item => ",
+							"                'Id' in item && 'Content' in item && 'Icon' in item &&",
+							"                (!item.Children || checkKeys(item.Children))",
+							"            );",
+							"        }",
+							"        return 'Id' in data && 'Content' in data && 'Icon' in data;",
+							"    };",
+							"",
+							"    pm.expect(checkKeys(jsonData)).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}api/projects/{{idProject}}.json",
+					"host": [
+						"{{url}}api"
+					],
+					"path": [
+						"projects",
+						"{{idProject}}.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE PROJECT BY ID",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const newContent =  pm.variables.replaceIn(\"{{$randomCountry}}\");",
+							"pm.environment.set(\"newContent\",newContent);",
+							"pm.collectionVariables.set(\"newContent\", newContent);",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validación del cambio de Content\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.Content).to.eqls(`${pm.environment.get(\"newContent\")}`);",
+							"});",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"pm.test(\"Every id is Valid\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    const extractIds = data => {",
+							"        if (Array.isArray(data)) {",
+							"            return data.flatMap(item => [item.Id, ...(item.Children ? extractIds(item.Children) : [])]);",
+							"        } else {",
+							"            return [data.Id];",
+							"        }",
+							"    }",
+							"",
+							"    const allValid = extractIds(jsonData).every(id => Number.isFinite(id) && id > 1000000);",
+							"",
+							"    pm.expect(allValid).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Every item has Id, Content, and Icon\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    const checkKeys = data => {",
+							"        if (Array.isArray(data)) {",
+							"            return data.every(item => ",
+							"                'Id' in item && 'Content' in item && 'Icon' in item &&",
+							"                (!item.Children || checkKeys(item.Children))",
+							"            );",
+							"        }",
+							"        return 'Id' in data && 'Content' in data && 'Icon' in data;",
+							"    };",
+							"",
+							"    pm.expect(checkKeys(jsonData)).to.be.true;",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Content\": \"{{newContent}}\",\n    \"Icon\": 0,\n    \"ItemType\": 2,\n    \"Collapsed\": false,\n    \"ItemOrder\": 9\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}api/projects/{{idProject}}.json",
+					"host": [
+						"{{url}}api"
+					],
+					"path": [
+						"projects",
+						"{{idProject}}.json"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "idProject",
+			"value": ""
+		},
+		{
+			"key": "newContent",
+			"value": ""
+		}
+	]
+}
