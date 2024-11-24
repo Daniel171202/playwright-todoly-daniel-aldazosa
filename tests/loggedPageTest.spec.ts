@@ -47,7 +47,7 @@ test("Adicionar un proyecto cambiandole el icono por defecto", async ({
   ).toBeTruthy();
 
   //delete project
-  await loggedPage.deleteProject(idRandomProject);
+  //await loggedPage.deleteProject(idRandomProject);
 });
 
 test("Adicionar una tarea a un proyecto y cambiar su prioridad", async ({

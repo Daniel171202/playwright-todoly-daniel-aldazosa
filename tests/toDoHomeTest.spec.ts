@@ -9,6 +9,9 @@ const randomName = Math.random().toString(36).substring(7);
 const randomEmail = randomName + '@example.com';
 const insecurePassword = 'password123';
 
+const constantUserName = 'daniel.aldazosa@ucb.edu.bo';
+const constantPassword = 'daniel123';
+
 test('Registrar nuevo usuario', async ({ page }) => {
     const homePage = new ToDoHomePage(page);
     await homePage.clickOnSignUpFree();
@@ -22,7 +25,7 @@ test('Iniciar sesión con usuario registrado', async ({ page }) => {
     const homePage = new ToDoHomePage(page);
     await homePage.clickOnLogin();
 
-    await homePage.fillDataLogin(randomEmail, insecurePassword);
+    await homePage.fillDataLogin(constantUserName, constantPassword);
     await homePage.clickOnLoginSubmit();
 
     //see if user is logged in
